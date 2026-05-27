@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FixFlow POS & Repair Management System</title>
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Login Screen Overlay -->
+    <div id="login-screen" class="login-screen">
+        <div class="login-backdrop-glow"></div>
+        <div class="login-backdrop-glow-2"></div>
+        
+        <div class="login-card">
+            <div class="login-brand">
+                <div class="login-logo">
+                    <i data-lucide="cpu" class="logo-icon"></i>
+                </div>
+                <div class="login-brand-info">
+                    <span class="login-brand-name">FixFlow POS</span>
+                    <span class="login-brand-tag">Lanka Mobiles</span>
+                </div>
+            </div>
+            
+            <h3 class="login-title">Staff Portal Authentication</h3>
+            <p class="login-subtitle">Please enter your credentials to access the POS & Repair system.</p>
+            
+            <form id="login-form">
+                <div class="form-group-login">
+                    <label for="login-username" class="required">Username</label>
+                    <div class="input-with-icon">
+                        <i data-lucide="user"></i>
+                        <input type="text" id="login-username" placeholder="Enter username" required autocomplete="username">
+                    </div>
+                </div>
+                
+                <div class="form-group-login mt-3">
+                    <label for="login-password" class="required">Password</label>
+                    <div class="input-with-icon">
+                        <i data-lucide="lock"></i>
+                        <input type="password" id="login-password" placeholder="Enter password" required autocomplete="current-password">
+                        <button type="button" class="btn-toggle-password" id="btn-toggle-password" title="Toggle password visibility">
+                            <i data-lucide="eye" id="password-toggle-icon"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="login-error-message" class="login-error hidden">
+                    <i data-lucide="alert-circle"></i>
+                    <span id="login-error-text">Invalid username or password!</span>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block btn-glowing mt-4">
+                    <i data-lucide="log-in"></i>
+                    <span>Access Dashboard</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-logo">
+                    <i data-lucide="cpu" class="logo-icon"></i>
+                </div>
+                <div class="brand-info">
+                    <span class="brand-name">FixFlow POS</span>
+                    <span class="brand-tag">Lanka Mobiles</span>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active" data-tab="dashboard">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="new-ticket">
+                    <i data-lucide="file-plus-2"></i>
+                    <span>New Repair Intake</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="tickets">
+                    <i data-lucide="wrench"></i>
+                    <span>Repair Tickets</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="pos">
+                    <i data-lucide="shopping-cart"></i>
+                    <span>POS / Checkout</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="inventory">
+                    <i data-lucide="package"></i>
+                    <span>Inventory & Parts</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="settings">
+                    <i data-lucide="settings"></i>
+                    <span>Settings & Tools</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="tech-profile">
+                    <i data-lucide="user-check" class="tech-icon"></i>
+                    <div class="tech-details">
+                        <span class="tech-name" id="current-user-name">Main Tech</span>
+                        <span class="tech-role">Administrator</span>
+                    </div>
+                </div>
+                <button class="logout-btn-sidebar" id="btn-logout" type="button">
+                    <i data-lucide="log-out"></i>
+                    <span>Log Out Staff</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Body Panel -->
+        <main class="main-panel">
+            <!-- Header bar -->
+            <header class="app-header">
+                <div class="header-left">
+                    <h1 class="page-title" id="page-title-text">Dashboard Overview</h1>
+                    <p class="page-subtitle" id="page-subtitle-text">Real-time shop performance metrics and repair
+                        queues.</p>
+                </div>
+                <div class="header-right">
+                    <div class="live-clock">
+                        <i data-lucide="calendar"></i>
+                        <span id="live-date">May 26, 2026</span>
+                        <span class="clock-divider">|</span>
+                        <span id="live-time">15:10</span>
+                    </div>
+                    <button class="btn btn-secondary demo-injector-btn" id="btn-load-demo-header">
+                        <i data-lucide="sparkles"></i>
+                        <span>Load Demo Data</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Global Toast Notification -->
+            <div id="toast" class="toast hidden">
+                <i data-lucide="info" id="toast-icon"></i>
+                <span id="toast-message">Notification message!</span>
+            </div>
+
+            <!-- Content Area (Tabs) -->
+            <div class="content-container">
+
+                <!-- 1. DASHBOARD TAB -->
+                <section id="tab-dashboard" class="tab-content active">
+                    <!-- Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card blue">
+                            <div class="stat-icon-wrapper">
+                                <i data-lucide="hourglass"></i>
+                            </div>
+                            <div class="stat-content">
+                                <span class="stat-label">Active Repairs</span>
+                                <h2 class="stat-value" id="stat-active-repairs">0</h2>
+                                <span class="stat-trend trend-neutral">In workshop queue</span>
+                            </div>
+                        </div>
+                        <div class="stat-card green">
+                            <div class="stat-icon-wrapper">
+                                <i data-lucide="check-circle-2"></i>
+                            </div>
+                            <div class="stat-content">
+                                <span class="stat-label">Ready for Pickup</span>
+                                <h2 class="stat-value" id="stat-ready-pickup">0</h2>
+                                <span class="stat-trend trend-up">Awaiting customer collection</span>
+                            </div>
+                        </div>
+                        <div class="stat-card amber">
+                            <div class="stat-icon-wrapper">
+                                <i data-lucide="alert-triangle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <span class="stat-label">Low Stock Parts</span>
+                                <h2 class="stat-value" id="stat-low-stock">0</h2>
+                                <span class="stat-trend trend-down">Needs urgent reorder</span>
+                            </div>
+                        </div>
+                        <div class="stat-card purple">
+                            <div class="stat-icon-wrapper">
+                                <i data-lucide="banknote"></i>
+                            </div>
+                            <div class="stat-content">
+                                <span class="stat-label">Daily POS Revenue</span>
+                                <h2 class="stat-value" id="stat-revenue-today">$0.00</h2>
+                                <span class="stat-trend trend-up" id="stat-revenue-info">Today's transactions</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Split Layout -->
+                    <div class="dashboard-split">
+                        <!-- Recent active repairs list -->
+                        <div class="dashboard-card main-split-card">
+                            <div class="card-header">
+                                <h3>Critical Repairs Activity</h3>
+                                <button class="btn-text-action" id="btn-view-all-tickets">
+                                    <span>View All Tickets</span>
+                                    <i data-lucide="arrow-right"></i>
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-container">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Ticket ID</th>
+                                                <th>Customer</th>
+                                                <th>Device Description</th>
+                                                <th>Issue Summary</th>
+                                                <th>Due Date</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="dashboard-repairs-table">
+                                            <tr>
+                                                <td colspan="7" class="text-center text-muted py-4">No active repairs
+                                                    found. Create a ticket or load demo data to begin!</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Side widgets -->
+                        <div class="dashboard-card side-split-card">
+                            <div class="card-header">
+                                <h3>Quick Shop Actions</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="quick-actions-list">
+                                    <button class="quick-action-btn primary" id="action-new-ticket">
+                                        <div class="action-icon"><i data-lucide="file-plus-2"></i></div>
+                                        <div class="action-info">
+                                            <span class="action-title">Create Repair Intake</span>
+                                            <span class="action-desc">Check-in customer & device</span>
+                                        </div>
+                                    </button>
+                                    <button class="quick-action-btn success" id="action-pos-checkout">
+                                        <div class="action-icon"><i data-lucide="shopping-cart"></i></div>
+                                        <div class="action-info">
+                                            <span class="action-title">POS Billing Checkout</span>
+                                            <span class="action-desc">Charge customer & bill items</span>
+                                        </div>
+                                    </button>
+                                    <button class="quick-action-btn secondary" id="action-add-part">
+                                        <div class="action-icon"><i data-lucide="package-plus"></i></div>
+                                        <div class="action-info">
+                                            <span class="action-title">New Inventory Stock</span>
+                                            <span class="action-desc">Add screen, battery, keyboard</span>
+                                        </div>
+                                    </button>
+                                </div>
+
+                                <div class="workshop-load-gauge">
+                                    <h4 class="gauge-title">Workshop Loading Status</h4>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar" id="dashboard-load-bar" style="width: 0%"></div>
+                                    </div>
+                                    <div class="gauge-legend">
+                                        <span id="dashboard-load-text">0 Active / 15 Max capacity</span>
+                                        <span id="dashboard-load-pct">0%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. NEW TICKET TAB -->
+                <section id="tab-new-ticket" class="tab-content">
+                    <form id="new-ticket-form" class="responsive-form">
+                        <input type="hidden" id="ticket-edit-id" value="">
+                        <div class="form-grid">
+
+                            <!-- Left Grid Column: Customer & Device -->
+                            <div class="form-section-card">
+                                <div class="section-header">
+                                    <i data-lucide="user" class="header-icon"></i>
+                                    <h3>Customer Information</h3>
+                                </div>
+                                <div class="section-body">
+                                    <div class="form-row">
+                                        <div class="form-group col-12">
+                                            <label for="cust-name" class="required">Customer Full Name</label>
+                                            <input type="text" id="cust-name" placeholder="John Doe" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-6">
+                                            <label for="cust-phone" class="required">Phone Number</label>
+                                            <input type="tel" id="cust-phone" placeholder="077 123 4567" required>
+                                        </div>
+                                        <div class="form-group col-6">
+                                            <label for="cust-id">ID Number</label>
+                                            <input type="tel" id="cust-Id" placeholder="00000000000">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-12">
+                                            <label for="cust-address">Home Address / Contact Details</label>
+                                            <textarea id="cust-address" rows="2"
+                                                placeholder="Street name, City"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="section-header mt-4">
+                                    <i data-lucide="smartphone" class="header-icon"></i>
+                                    <h3>Device Details</h3>
+                                </div>
+                                <div class="section-body">
+                                    <div class="form-row">
+                                        <div class="form-group col-6">
+                                            <label for="device-type" class="required">Device Category</label>
+                                            <select id="device-type" required>
+                                                <option value="Mobile">Smartphone / Mobile</option>
+                                                <option value="Laptop">Laptop Computer</option>
+                                                <option value="Desktop">Desktop PC</option>
+                                                <option value="Tablet">Tablet / iPad</option>
+                                                <option value="Other">Smart Watch / Other</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-6">
+                                            <label for="device-brand" class="required">Device Brand</label>
+                                            <input type="text" id="device-brand" placeholder="e.g. Apple, Samsung, Asus"
+                                                required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-6">
+                                            <label for="device-model" class="required">Model Name/No.</label>
+                                            <input type="text" id="device-model"
+                                                placeholder="e.g. iPhone 14 Pro, Vivo Y20, Vivo V23" required>
+                                        </div>
+                                        <div class="form-group col-6">
+                                            <label for="device-serial">IMEI / Serial Number</label>
+                                            <input type="text" id="device-serial"
+                                                placeholder="IMEI or serial barcode number">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-12">
+                                            <label for="device-passcode">Screen Lock Passcode / Pattern Status</label>
+                                            <input type="text" id="device-passcode"
+                                                placeholder="e.g. 1234, Pattern 'L', or 'None provided'">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Grid Column: Inspection & Costing -->
+                            <div class="form-section-card">
+                                <div class="section-header">
+                                    <i data-lucide="clipboard-check" class="header-icon"></i>
+                                    <h3>Liability Intake Checklists (Pre-Inspection)</h3>
+                                </div>
+                                <div class="section-body">
+                                    <p class="checklist-desc-tip">Verify physical states in front of the customer to
+                                        avoid disputes.</p>
+
+                                    <div class="checklist-grid">
+                                        <div class="checklist-item">
+                                            <span class="checklist-label">Power / Startup</span>
+                                            <div class="tri-state-switch" data-check="power">
+                                                <button type="button" class="tri-btn ok" data-state="ok"
+                                                    title="Working"><i data-lucide="check"></i></button>
+                                                <button type="button" class="tri-btn bad" data-state="bad"
+                                                    title="Defective"><i data-lucide="x"></i></button>
+                                                <button type="button" class="tri-btn unchecked active"
+                                                    data-state="untested" title="Not Checked">-</button>
+                                            </div>
+                                        </div>
+                                        <div class="checklist-item">
+                                            <span class="checklist-label">Display & Digitizer</span>
+                                            <div class="tri-state-switch" data-check="display">
+                                                <button type="button" class="tri-btn ok" data-state="ok"><i
+                                                        data-lucide="check"></i></button>
+                                                <button type="button" class="tri-btn bad" data-state="bad"><i
+                                                        data-lucide="x"></i></button>
+                                                <button type="button" class="tri-btn unchecked active"
+                                                    data-state="untested">-</button>
+                                            </div>
+                                        </div>
+                                        <div class="checklist-item">
+                                            <span class="checklist-label">Touch Screen Input</span>
+                                            <div class="tri-state-switch" data-check="touch">
+                                                <button type="button" class="tri-btn ok" data-state="ok"><i
+                                                        data-lucide="check"></i></button>
+                                                <button type="button" class="tri-btn bad" data-state="bad"><i
+                                                        data-lucide="x"></i></button>
+                                                <button type="button" class="tri-btn unchecked active"
+                                                    data-state="untested">-</button>
+                                            </div>
+                                        </div>
+                                        <div class="checklist-item">
+                                            <span class="checklist-label">Charging Port / Charge</span>
+                                            <div class="tri-state-switch" data-check="charge">
+                                                <button type="button" class="tri-btn ok" data-state="ok"><i
+                                                        data-lucide="check"></i></button>
+                                                <button type="button" class="tri-btn bad" data-state="bad"><i
+                                                        data-lucide="x"></i></button>
+                                                <button type="button" class="tri-btn unchecked active"
+                                                    data-state="untested">-</button>
+                                            </div>
+                                        </div>
+                                        <div class="checklist-item">
+                                            <span class="checklist-label">Front & Rear Cameras</span>
+                                            <div class="tri-state-switch" data-check="cameras">
+                                                <button type="button" class="tri-btn ok" data-state="ok"><i
+                                                        data-lucide="check"></i></button>
+                                                <button type="button" class="tri-btn bad" data-state="bad"><i
+                                                        data-lucide="x"></i></button>
+                                                <button type="button" class="tri-btn unchecked active"
+                                                    data-state="untested">-</button>
+                                            </div>
+                                        </div>
+                                        <div class="checklist-item">
+                                            <span class="checklist-label">Speakers / Earpiece</span>
+                                            <div class="tri-state-switch" data-check="audio">
+                                                <button type="button" class="tri-btn ok" data-state="ok"><i
+                                                        data-lucide="check"></i></button>
+                                                <button type="button" class="tri-btn bad" data-state="bad"><i
+                                                        data-lucide="x"></i></button>
+                                                <button type="button" class="tri-btn unchecked active"
+                                                    data-state="untested">-</button>
+                                            </div>
+                                        </div>
+                                        <div class="checklist-item">
+                                            <span class="checklist-label">Wi-Fi & Cellular Signal</span>
+                                            <div class="tri-state-switch" data-check="wifi">
+                                                <button type="button" class="tri-btn ok" data-state="ok"><i
+                                                        data-lucide="check"></i></button>
+                                                <button type="button" class="tri-btn bad" data-state="bad"><i
+                                                        data-lucide="x"></i></button>
+                                                <button type="button" class="tri-btn unchecked active"
+                                                    data-state="untested">-</button>
+                                            </div>
+                                        </div>
+                                        <div class="checklist-item">
+                                            <span class="checklist-label">Liquid Spill Signs</span>
+                                            <div class="tri-state-switch" data-check="liquid">
+                                                <button type="button" class="tri-btn ok" data-state="ok"
+                                                    title="Dry (No damage)"><i data-lucide="check"></i></button>
+                                                <button type="button" class="tri-btn bad" data-state="bad"
+                                                    title="Damaged/Corroded"><i data-lucide="x"></i></button>
+                                                <button type="button" class="tri-btn unchecked active"
+                                                    data-state="untested">-</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="accessory-chips-area mt-3">
+                                        <label class="section-sub-label">Accessories Left Behind</label>
+                                        <div class="accessory-chips">
+                                            <label class="chip"><input type="checkbox" name="accessories"
+                                                    value="Charger"> <span>Charger / Cable</span></label>
+                                            <label class="chip"><input type="checkbox" name="accessories"
+                                                    value="Battery"> <span>Battery Only</span></label>
+                                            <label class="chip"><input type="checkbox" name="accessories" value="Case">
+                                                <span>Case / Sleeve</span></label>
+                                            <label class="chip"><input type="checkbox" name="accessories"
+                                                    value="SIM Card"> <span>SIM Card</span></label>
+                                            <label class="chip"><input type="checkbox" name="accessories"
+                                                    value="SD Card"> <span>Memory Card</span></label>
+                                            <label class="chip"><input type="checkbox" name="accessories"
+                                                    value="Stylus Pen"> <span>Stylus Pen</span></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="section-header mt-4">
+                                    <i data-lucide="wrench" class="header-icon"></i>
+                                    <h3>Job Assignment & Estimations</h3>
+                                </div>
+                                <div class="section-body">
+                                    <div class="form-row">
+                                        <div class="form-group col-12">
+                                            <label for="ticket-issue" class="required">Reported Issue / Work
+                                                Order</label>
+                                            <textarea id="ticket-issue" rows="2"
+                                                placeholder="e.g. Cracked screen, needs battery swap, logic board liquid cleaning"
+                                                required></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-6">
+                                            <label for="ticket-tech">Assigned Technician</label>
+                                            <select id="ticket-tech">
+                                                <option value="Main Tech">Main Tech (Admin)</option>
+                                                <option value="John Repairer">John Repairer</option>
+                                                <option value="Sarah Micro-Solderer">Sarah Micro-Solderer</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-6">
+                                            <label for="ticket-status">Initial Status</label>
+                                            <select id="ticket-status">
+                                                <option value="Received">Received (Intake)</option>
+                                                <option value="Inspection">Under Inspection</option>
+                                                <option value="In Progress">In Progress</option>
+                                                <option value="Awaiting Parts">Awaiting Parts</option>
+                                                <option value="Ready">Ready for Pickup</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-4">
+                                            <label for="ticket-est-cost" class="required">Estimated Total ($)</label>
+                                            <input type="number" id="ticket-est-cost" step="0.01" min="0"
+                                                placeholder="120.00" required>
+                                        </div>
+                                        <div class="form-group col-4">
+                                            <label for="ticket-deposit">Deposit Paid ($)</label>
+                                            <input type="number" id="ticket-deposit" step="0.01" min="0"
+                                                placeholder="0.00">
+                                        </div>
+                                        <div class="form-group col-4">
+                                            <label for="ticket-due-date" class="required">Promise / Due Date</label>
+                                            <input type="date" id="ticket-due-date" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row mt-4">
+                                        <div class="form-group col-12">
+                                            <button type="submit" class="btn btn-primary btn-block btn-glowing"
+                                                id="btn-save-ticket">
+                                                <i data-lucide="save"></i>
+                                                <span>Save Intake Ticket</span>
+                                            </button>
+                                            <button type="button" class="btn btn-secondary btn-block mt-2 hidden"
+                                                id="btn-cancel-edit">
+                                                <span>Cancel Edit Mode</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </section>
+
+                <!-- 3. TICKETS LIST & KANBAN TAB -->
+                <section id="tab-tickets" class="tab-content">
+                    <div class="tickets-header-actions">
+                        <div class="search-filter-row">
+                            <div class="search-input-wrapper">
+                                <i data-lucide="search" class="search-icon"></i>
+                                <input type="text" id="ticket-search"
+                                    placeholder="Search by Ticket ID, Customer, Phone, Model...">
+                            </div>
+
+                            <div class="filter-controls">
+                                <select id="filter-ticket-status">
+                                    <option value="All">All Statuses</option>
+                                    <option value="Received">Received</option>
+                                    <option value="Inspection">Inspection</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Awaiting Parts">Awaiting Parts</option>
+                                    <option value="Ready">Ready for Pickup</option>
+                                    <option value="Collected">Collected & Closed</option>
+                                </select>
+
+                                <select id="filter-ticket-device">
+                                    <option value="All">All Categories</option>
+                                    <option value="Mobile">Mobiles</option>
+                                    <option value="Laptop">Laptops</option>
+                                    <option value="Desktop">Desktops</option>
+                                    <option value="Tablet">Tablets</option>
+                                    <option value="Other">Other Electronics</option>
+                                </select>
+
+                                <div class="view-toggle-btns">
+                                    <button class="toggle-btn active" id="view-toggle-kanban" title="Kanban Board View">
+                                        <i data-lucide="kanban"></i>
+                                    </button>
+                                    <button class="toggle-btn" id="view-toggle-list" title="Detailed Grid List View">
+                                        <i data-lucide="list"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- KANBAN BOARD VIEW -->
+                    <div id="tickets-kanban-view" class="kanban-board">
+
+                        <!-- Column: Received -->
+                        <div class="kanban-column" data-status="Received">
+                            <div class="column-header">
+                                <div class="column-title-wrap">
+                                    <span class="status-indicator stat-received"></span>
+                                    <h4>Received</h4>
+                                    <span class="column-count" id="count-kanban-received">0</span>
+                                </div>
+                            </div>
+                            <div class="kanban-cards-container" id="kanban-col-received">
+                                <!-- Cards injected by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Column: Under Inspection -->
+                        <div class="kanban-column" data-status="Inspection">
+                            <div class="column-header">
+                                <div class="column-title-wrap">
+                                    <span class="status-indicator stat-inspection"></span>
+                                    <h4>Inspection</h4>
+                                    <span class="column-count" id="count-kanban-inspection">0</span>
+                                </div>
+                            </div>
+                            <div class="kanban-cards-container" id="kanban-col-inspection">
+                                <!-- Cards injected by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Column: In Progress -->
+                        <div class="kanban-column" data-status="In Progress">
+                            <div class="column-header">
+                                <div class="column-title-wrap">
+                                    <span class="status-indicator stat-progress"></span>
+                                    <h4>In Progress</h4>
+                                    <span class="column-count" id="count-kanban-inprogress">0</span>
+                                </div>
+                            </div>
+                            <div class="kanban-cards-container" id="kanban-col-inprogress">
+                                <!-- Cards injected by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Column: Awaiting Parts -->
+                        <div class="kanban-column" data-status="Awaiting Parts">
+                            <div class="column-header">
+                                <div class="column-title-wrap">
+                                    <span class="status-indicator stat-parts"></span>
+                                    <h4>Awaiting Parts</h4>
+                                    <span class="column-count" id="count-kanban-awaiting">0</span>
+                                </div>
+                            </div>
+                            <div class="kanban-cards-container" id="kanban-col-awaiting">
+                                <!-- Cards injected by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Column: Ready for Pickup -->
+                        <div class="kanban-column" data-status="Ready">
+                            <div class="column-header">
+                                <div class="column-title-wrap">
+                                    <span class="status-indicator stat-ready"></span>
+                                    <h4>Ready for Pickup</h4>
+                                    <span class="column-count" id="count-kanban-ready">0</span>
+                                </div>
+                            </div>
+                            <div class="kanban-cards-container" id="kanban-col-ready">
+                                <!-- Cards injected by JS -->
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- DETAILED LIST VIEW -->
+                    <div id="tickets-list-view" class="dashboard-card hidden">
+                        <div class="card-body">
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Ticket ID</th>
+                                            <th>Customer Info</th>
+                                            <th>Device Details</th>
+                                            <th>Assigned Staff</th>
+                                            <th>Due Date</th>
+                                            <th>Costing Summary</th>
+                                            <th>Status Badge</th>
+                                            <th class="text-right">Actions Menu</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tickets-list-table-body">
+                                        <!-- Rows injected by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. POS / BILLING TAB -->
+                <section id="tab-pos" class="tab-content">
+                    <div class="pos-split-layout">
+                        <!-- Left Panel: Cart & Items selection -->
+                        <div class="pos-cart-panel">
+
+                            <!-- Search & Load Repair Ticket -->
+                            <div class="pos-card ticket-selector-card">
+                                <div class="card-header-pos">
+                                    <i data-lucide="wrench"></i>
+                                    <h4>Link Outstanding Repair Ticket</h4>
+                                </div>
+                                <div class="card-body-pos">
+                                    <div class="ticket-link-row">
+                                        <select id="pos-ticket-selector" class="form-control-pos">
+                                            <option value="">-- Direct Sales Checkout (No Ticket Linked) --</option>
+                                            <!-- Outstanding tickets (Ready or Active) will be added here -->
+                                        </select>
+                                        <button class="btn btn-secondary" id="btn-pos-load-ticket" type="button">
+                                            <i data-lucide="import"></i>
+                                            <span>Link Job</span>
+                                        </button>
+                                    </div>
+                                    <div class="linked-ticket-banner hidden" id="linked-ticket-details">
+                                        <!-- Active ticket text updates here -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Cart Items List -->
+                            <div class="pos-card cart-items-card">
+                                <div class="card-header-pos justify-between">
+                                    <div class="header-left-title">
+                                        <i data-lucide="shopping-bag"></i>
+                                        <h4>Billing Receipt Items</h4>
+                                    </div>
+                                    <button class="btn-clear-cart" id="btn-clear-cart" title="Reset Receipt Items">
+                                        <i data-lucide="rotate-ccw"></i>
+                                        <span>Clear Items</span>
+                                    </button>
+                                </div>
+                                <div class="card-body-pos p-0">
+                                    <div class="pos-cart-list-header">
+                                        <span class="hdr-item-desc">Item Description</span>
+                                        <span class="hdr-item-price">Unit Cost</span>
+                                        <span class="hdr-item-qty">Qty</span>
+                                        <span class="hdr-item-total">Total Price</span>
+                                        <span class="hdr-item-action"></span>
+                                    </div>
+                                    <div class="pos-cart-items-container" id="pos-cart-items-container">
+                                        <!-- Cart Items injected dynamically -->
+                                        <div class="cart-empty-placeholder">
+                                            <i data-lucide="shopping-cart"></i>
+                                            <p>No billing items added yet.</p>
+                                            <p class="sub-placeholder">Search stock catalog or add custom parts below.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Fast catalog insertion and Custom additions -->
+                            <div class="pos-card add-items-card">
+                                <div class="tabs-sub-header">
+                                    <button class="sub-tab-btn active" id="subtab-inventory">Inventory Catalog</button>
+                                    <button class="sub-tab-btn" id="subtab-custom">Custom Labor / Fee</button>
+                                </div>
+
+                                <div class="sub-tab-content active" id="pos-subtab-inventory-content">
+                                    <div class="catalog-search-row">
+                                        <i data-lucide="search" class="search-icon-pos"></i>
+                                        <input type="text" id="pos-catalog-search"
+                                            placeholder="Type name, category, or SKU to search store inventory...">
+                                    </div>
+                                    <div class="catalog-grid-quick" id="pos-catalog-grid">
+                                        <!-- Quick add grid elements injected by JS -->
+                                    </div>
+                                </div>
+
+                                <div class="sub-tab-content" id="pos-subtab-custom-content">
+                                    <form id="pos-custom-item-form" class="custom-item-row-form">
+                                        <div class="form-row-pos">
+                                            <div class="form-group col-6">
+                                                <label for="pos-custom-name">Part Name / Labor Description</label>
+                                                <input type="text" id="pos-custom-name"
+                                                    placeholder="e.g. Charging Port Repair Labor" required>
+                                            </div>
+                                            <div class="form-group col-3">
+                                                <label for="pos-custom-price">Unit Cost ($)</label>
+                                                <input type="number" id="pos-custom-price" step="0.01" min="0"
+                                                    placeholder="45.00" required>
+                                            </div>
+                                            <div class="form-group col-3">
+                                                <label>&nbsp;</label>
+                                                <button type="submit" class="btn btn-secondary btn-block">
+                                                    <i data-lucide="plus-circle"></i>
+                                                    <span>Add Fee</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Right Panel: Financial math, payment options -->
+                        <div class="pos-billing-summary-panel">
+                            <div class="pos-card summary-card">
+                                <div class="card-header-pos">
+                                    <i data-lucide="receipt"></i>
+                                    <h4>Transaction Calculations</h4>
+                                </div>
+                                <div class="card-body-pos">
+                                    <!-- Customer selection for Direct POS Sales -->
+                                    <div class="form-group mb-3" id="pos-direct-customer-area">
+                                        <label for="pos-customer-phone-search" class="pos-sm-label">Bill To Customer
+                                            (Search / Add)</label>
+                                        <div class="pos-input-group">
+                                            <input type="text" id="pos-customer-search-input"
+                                                placeholder="Type Client Name / Phone Number">
+                                            <ul class="customer-search-dropdown hidden" id="customer-suggestions"></ul>
+                                        </div>
+                                        <div class="current-billing-customer-badge" id="billing-customer-badge">
+                                            <span>Billing: <strong>Walk-in Cash Client</strong></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="math-lines-stack">
+                                        <div class="math-line">
+                                            <span>Subtotal</span>
+                                            <span class="val" id="pos-calc-subtotal">$0.00</span>
+                                        </div>
+                                        <div class="math-line">
+                                            <span>Tax (<span id="pos-tax-percentage-label">8</span>%)</span>
+                                            <span class="val" id="pos-calc-tax">$0.00</span>
+                                        </div>
+                                        <div class="math-line flex-column-math">
+                                            <div class="discount-inputs">
+                                                <span>Apply Discount</span>
+                                                <div class="discount-toggles">
+                                                    <input type="number" id="pos-discount-value" min="0" placeholder="0"
+                                                        class="disc-num">
+                                                    <select id="pos-discount-type" class="disc-sel">
+                                                        <option value="pct">%</option>
+                                                        <option value="val">$</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <span class="val negative" id="pos-calc-discount">-$0.00</span>
+                                        </div>
+                                        <div class="math-line active-deposit-line hidden" id="pos-deposit-discount-row">
+                                            <span class="dep-label-wrap">
+                                                <i data-lucide="check-square" class="text-green"></i>
+                                                <span>Deduct Repair Deposit</span>
+                                            </span>
+                                            <span class="val negative" id="pos-calc-deposit">-$0.00</span>
+                                        </div>
+                                        <div class="math-divider"></div>
+                                        <div class="math-line grand-total-line">
+                                            <span>Total Balance Due</span>
+                                            <span class="val grand-price" id="pos-calc-grandtotal">$0.00</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="payment-method-section mt-4">
+                                        <label class="pos-sm-label">Select Payment Channel</label>
+                                        <div class="payment-grid-selection">
+                                            <label class="pay-method-btn active">
+                                                <input type="radio" name="payment_method" value="Cash" checked>
+                                                <i data-lucide="banknote"></i>
+                                                <span>Cash</span>
+                                            </label>
+                                            <label class="pay-method-btn">
+                                                <input type="radio" name="payment_method" value="Card">
+                                                <i data-lucide="credit-card"></i>
+                                                <span>Card</span>
+                                            </label>
+                                            <label class="pay-method-btn">
+                                                <input type="radio" name="payment_method" value="Bank Transfer">
+                                                <i data-lucide="landmark"></i>
+                                                <span>Transfer</span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="cash-register-math mt-3" id="cash-calculation-fields">
+                                        <div class="form-row-pos">
+                                            <div class="form-group col-6">
+                                                <label for="pos-amount-tendered" class="pos-sm-label">Amount Paid /
+                                                    Tendered</label>
+                                                <input type="number" id="pos-amount-tendered" step="0.01" min="0"
+                                                    placeholder="0.00">
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label class="pos-sm-label">Change Refund Due</label>
+                                                <div class="change-refund-display" id="pos-change-returned">$0.00</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="action-checkout-wrapper mt-4">
+                                        <button class="btn btn-success btn-block btn-glowing-green py-3 text-lg"
+                                            id="btn-complete-checkout">
+                                            <i data-lucide="shopping-cart"></i>
+                                            <span>Complete Checkout & Print</span>
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. INVENTORY TAB -->
+                <section id="tab-inventory" class="tab-content">
+                    <div class="inventory-top-row">
+                        <div class="search-input-wrapper max-w-sm">
+                            <i data-lucide="search" class="search-icon"></i>
+                            <input type="text" id="inventory-search" placeholder="Filter items by SKU, name, brand...">
+                        </div>
+
+                        <div class="inventory-quick-stats">
+                            <span class="inv-stat">Total SKU Assets: <strong id="inv-total-skus">0</strong></span>
+                            <span class="inv-stat alert-text">Out of Stock: <strong
+                                    id="inv-out-of-stock">0</strong></span>
+                        </div>
+
+                        <button class="btn btn-primary" id="btn-open-add-inventory-modal">
+                            <i data-lucide="plus"></i>
+                            <span>Add Stock Item</span>
+                        </button>
+                    </div>
+
+                    <!-- Inventory Table Container -->
+                    <div class="dashboard-card">
+                        <div class="card-body">
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>SKU Code</th>
+                                            <th>Product / Service Name</th>
+                                            <th>Category Type</th>
+                                            <th>Current Stock</th>
+                                            <th>Cost Value</th>
+                                            <th>Selling Price</th>
+                                            <th>Action Menu</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="inventory-table-body">
+                                        <!-- Dynamic JS content -->
+                                        <tr>
+                                            <td colspan="7" class="text-center text-muted py-4">No inventory cataloged
+                                                yet. Add items manually or load demo data in Settings.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 6. SETTINGS & UTILITIES TAB -->
+                <section id="tab-settings" class="tab-content">
+                    <div class="settings-grid-layout">
+
+                        <!-- Left Panel: General shop credentials -->
+                        <div class="form-section-card">
+                            <div class="section-header">
+                                <i data-lucide="store" class="header-icon"></i>
+                                <h3>Company Profile & Layout</h3>
+                        <!-- Left Column: Shop Profile and Security Credentials -->
+                        <div class="settings-column">
+                            <!-- Shop Profile Card -->
+                            <div class="form-section-card">
+                                <div class="section-header">
+                                    <i data-lucide="store" class="header-icon"></i>
+                                    <h3>Company Profile & Layout</h3>
+                                </div>
+                                <div class="section-body">
+                                    <form id="settings-shop-form">
+                                        <div class="form-row">
+                                            <div class="form-group col-12">
+                                                <label for="settings-shop-name" class="required">Business / Shop Name</label>
+                                                <input type="text" id="settings-shop-name" placeholder="FixFlow Shop" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-6">
+                                                <label for="settings-shop-phone" class="required">Contact Number</label>
+                                                <input type="text" id="settings-shop-phone" placeholder="077 123 4567" required>
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label for="settings-shop-email" class="required">Email Address</label>
+                                                <input type="email" id="settings-shop-email" placeholder="contact@fixflow.com" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-12">
+                                                <label for="settings-shop-address" class="required">Shop Location Address</label>
+                                                <input type="text" id="settings-shop-address" placeholder="123 Colombo Road, Kandy" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-6">
+                                                <label for="settings-shop-tax" class="required">Tax Rate (%)</label>
+                                                <input type="number" id="settings-shop-tax" min="0" max="100" placeholder="8" required>
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label for="settings-shop-currency" class="required">Currency Symbol</label>
+                                                <input type="text" id="settings-shop-currency" placeholder="LKR, $, Rs." required>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-12">
+                                                <label for="settings-shop-terms">Receipt Terms & Liability Policy</label>
+                                                <textarea id="settings-shop-terms" rows="4" placeholder="Important statements or conditions."></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-row mt-4">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i data-lucide="check"></i>
+                                                <span>Save Shop Settings</span>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- Security Credentials Card -->
+                            <div class="form-section-card mt-4">
+                                <div class="section-header">
+                                    <i data-lucide="shield-check" class="header-icon"></i>
+                                    <h3>Authentication & Security Settings</h3>
+                                </div>
+                                <div class="section-body">
+                                    <p class="admin-desc" style="margin-bottom: 16px;">Configure the username and password used to access the staff portal of this application.</p>
+                                    <form id="settings-security-form">
+                                        <div class="form-row">
+                                            <div class="form-group col-12">
+                                                <label for="settings-security-username" class="required">Portal Username</label>
+                                                <input type="text" id="settings-security-username" placeholder="admin" required autocomplete="username">
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-12">
+                                                <label for="settings-security-password" class="required">Portal Password</label>
+                                                <div class="input-with-icon" style="position: relative; display: flex; align-items: center;">
+                                                    <i data-lucide="lock" style="top: 12px; left: 16px; position: absolute; color: var(--text-muted); width: 18px; height: 18px;"></i>
+                                                    <input type="password" id="settings-security-password" placeholder="Enter password" required style="padding-left: 48px; padding-right: 48px;" autocomplete="new-password">
+                                                    <button type="button" class="btn-toggle-password" id="btn-toggle-security-password" title="Toggle password visibility" style="position: absolute; right: 16px; background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center;">
+                                                        <i data-lucide="eye" id="security-password-toggle-icon" style="position: static; pointer-events: auto;"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-row mt-4">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i data-lucide="save"></i>
+                                                <span>Update Credentials</span>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Data utilities, Demo Injection -->
+                        <div class="settings-column">
+                            <div class="form-section-card">
+                                <div class="section-header">
+                                    <i data-lucide="database" class="header-icon"></i>
+                                    <h3>Data Management & Administration</h3>
+                                </div>
+                                <div class="section-body">
+                                    <p class="admin-desc">All system data remains in your local device browser. Make
+                                        frequent backups to prevent accidental data loss.</p>
+                                    
+                                    <div class="admin-actions-stack">
+                                        <div class="admin-action-card">
+                                            <div class="admin-action-info">
+                                                <h5>Pre-populate Sandbox Mock Data</h5>
+                                                <p>Instantly populate the workspace with demo mobile items, computer
+                                                    tickets, technicians, and store earnings.</p>
+                                            </div>
+                                            <button class="btn btn-secondary flex-shrink-0" id="btn-load-demo-settings">
+                                                <i data-lucide="sparkles"></i>
+                                                <span>Inject Demo Sandbox</span>
+                                            </button>
+                                        </div>
+
+                                        <div class="admin-action-card">
+                                            <div class="admin-action-info">
+                                                <h5>Download Offline JSON Backup</h5>
+                                                <p>Save all settings, customers history, repair tickets list, and product
+                                                    inventory to a secure local file.</p>
+                                            </div>
+                                            <button class="btn btn-secondary flex-shrink-0" id="btn-export-database">
+                                                <i data-lucide="download"></i>
+                                                <span>Export Backup File</span>
+                                            </button>
+                                        </div>
+
+                                        <div class="admin-action-card">
+                                            <div class="admin-action-info">
+                                                <h5>Restore Backup File</h5>
+                                                <p>Restore previous transactions and repair tickets by uploading your
+                                                    exported JSON database backup.</p>
+                                            </div>
+                                            <div class="file-upload-wrapper">
+                                                <input type="file" id="import-database-file" accept=".json"
+                                                    class="file-input-hidden">
+                                                <button class="btn btn-secondary" id="btn-import-trigger-file">
+                                                    <i data-lucide="upload"></i>
+                                                    <span>Import Backup</span>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="admin-action-card border-danger">
+                                            <div class="admin-action-info">
+                                                <h5 class="text-red">Wipe Local Database</h5>
+                                                <p>Caution! Permanently erases all tickets, products stock, transactions
+                                                    records, and restores original presets.</p>
+                                            </div>
+                                            <button class="btn btn-danger" id="btn-wipe-database">
+                                                <i data-lucide="trash-2"></i>
+                                                <span>Wipe Everything</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL 1: ADD / EDIT INVENTORY ITEM -->
+    <div class="modal-backdrop hidden" id="inventory-modal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h4 id="inventory-modal-title">Create Stock Inventory Item</h4>
+                <button class="btn-close-modal" id="btn-close-inventory-modal"><i data-lucide="x"></i></button>
+            </div>
+            <form id="inventory-item-form">
+                <input type="hidden" id="inventory-edit-index" value="">
+                <div class="modal-body">
+                    <div class="form-row-pos">
+                        <div class="form-group col-12">
+                            <label for="inv-name" class="required">Product / Part / Service Title</label>
+                            <input type="text" id="inv-name" placeholder="e.g. iPad Pro Screen Digitizer Repair Part"
+                                required>
+                        </div>
+                    </div>
+                    <div class="form-row-pos mt-3">
+                        <div class="form-group col-6">
+                            <label for="inv-sku" class="required">SKU / Item Identifier Code</label>
+                            <input type="text" id="inv-sku" placeholder="SKU-XXXX" required>
+                        </div>
+                        <div class="form-group col-6">
+                            <label for="inv-category" class="required">Category</label>
+                            <select id="inv-category" required>
+                                <option value="Part">Repair Component (Part)</option>
+                                <option value="Labor">Labor Service Fee</option>
+                                <option value="Accessory">Retail Accessory</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row-pos mt-3">
+                        <div class="form-group col-4">
+                            <label for="inv-stock" class="required">Current Stock</label>
+                            <input type="number" id="inv-stock" min="0" placeholder="10" required>
+                        </div>
+                        <div class="form-group col-4">
+                            <label for="inv-cost" class="required">Cost Price ($)</label>
+                            <input type="number" id="inv-cost" step="0.01" min="0" placeholder="25.00" required>
+                        </div>
+                        <div class="form-group col-4">
+                            <label for="inv-price" class="required">Retail Price ($)</label>
+                            <input type="number" id="inv-price" step="0.01" min="0" placeholder="50.00" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btn-cancel-inventory-modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btn-save-inventory-modal">Save Inventory
+                        Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: INVOICE & RECEIPT TEMPLATE (FOR PRINTING) -->
+    <div class="modal-backdrop hidden" id="invoice-modal">
+        <div class="modal-dialog max-w-md print-full-modal">
+            <div class="modal-header hide-on-print">
+                <h4>Invoice Generated</h4>
+                <button class="btn-close-modal" id="btn-close-invoice-modal"><i data-lucide="x"></i></button>
+            </div>
+
+            <!-- PRINT CONTAINER -->
+            <div class="modal-body printable-invoice-area" id="invoice-print-container">
+                <!-- Dynamically generated receipt layout -->
+            </div>
+
+            <div class="modal-footer hide-on-print justify-between">
+                <div class="footer-print-options">
+                    <button class="btn btn-primary" id="btn-print-invoice">
+                        <i data-lucide="printer"></i>
+                        <span>Print Receipt (80mm)</span>
+                    </button>
+                    <button class="btn btn-secondary" id="btn-print-letter-invoice">
+                        <i data-lucide="file-text"></i>
+                        <span>Print A4 Invoice</span>
+                    </button>
+                </div>
+                <button class="btn btn-secondary" id="btn-dismiss-invoice-modal">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom JS script -->
+    <script src="app.js"></script>
+</body>
+
+</html>
